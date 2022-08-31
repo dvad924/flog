@@ -120,9 +120,10 @@ func NewCommonLogFormat(t time.Time) string {
 
 // NewJSONLogFormat creates a log string with json log format
 func NewJSONLogFormat(t time.Time) string {
+	index++
 	return fmt.Sprintf(
 		JSONLogFormat,
-		index++,
+		index,
 		gofakeit.IPv4Address(),
 		RandAuthUserID(),
 		t.Format(CommonLog),
