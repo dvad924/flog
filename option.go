@@ -60,6 +60,7 @@ type Option struct {
 	SplitBy   int
 	Overwrite bool
 	Forever   bool
+	Size      int
 }
 
 func init() {
@@ -91,6 +92,7 @@ func defaultOptions() *Option {
 		SplitBy:   0,
 		Overwrite: false,
 		Forever:   false,
+		Size:      10
 	}
 }
 
@@ -156,6 +158,13 @@ func ParseDelay(delayString string) (time.Duration, error) {
 	return time.Duration(delay * float64(time.Second)), nil
 }
 
+func ParseSize(stringSize int) (uint, error) {
+	if stringSize < 0 {
+		return 0, errors.New("string-size cannot be negative")
+	}
+	return stringSize, nil
+}
+
 // ParseSplitBy validates the given split-by
 func ParseSplitBy(splitBy int) (int, error) {
 	if splitBy < 0 {
@@ -182,7 +191,7 @@ func ParseOptions() *Option {
 	splitBy := pflag.IntP("split", "p", opts.SplitBy, "Maximum number of lines or size of a log file")
 	overwrite := pflag.BoolP("overwrite", "w", false, "Overwrite the existing log files")
 	forever := pflag.BoolP("loop", "l", false, "Loop output forever until killed")
-
+	size   := pflag.IntP("stringsize", "z", opts.Size, "size of the jumbostring bytes")
 	pflag.Parse()
 
 	if *help {
@@ -213,6 +222,9 @@ func ParseOptions() *Option {
 	}
 	if opts.SplitBy, err = ParseSplitBy(*splitBy); err != nil {
 		errorExit(err)
+	}
+	if opts.Size, err = ParseSize(*szie); err != nil {
+		errorExit(err)	
 	}
 	opts.Output = *output
 	opts.Overwrite = *overwrite
