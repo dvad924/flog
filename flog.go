@@ -48,7 +48,7 @@ func Generate(option *Option) error {
 		// Generates the logs until the certain number of lines is reached
 		for line := 0; line < option.Number; line++ {
 			time.Sleep(delay)
-			log := NewLog(option.Format, created)
+			log := NewLog(option.Format, created, options.Size)
 			_, _ = writer.Write([]byte(log + "\n"))
 
 			if (option.Type != "stdout") && (option.SplitBy > 0) && (line > option.SplitBy*splitCount) {
@@ -130,6 +130,28 @@ func NewLog(format string, t time.Time) string {
 		return NewCommonLogFormat(t)
 	case "json":
 		return NewJSONLogFormat(t)
+	default:
+		return ""
+	}
+}
+
+// NewLog creates a log for given format
+func NewLog(format string, t time.Time, size int) string {
+	switch format {
+	case "apache_common":
+		return NewApacheCommonLog(t)
+	case "apache_combined":
+		return NewApacheCombinedLog(t)
+	case "apache_error":
+		return NewApacheErrorLog(t)
+	case "rfc3164":
+		return NewRFC3164Log(t)
+	case "rfc5424":
+		return NewRFC5424Log(t)
+	case "common_log":
+		return NewCommonLogFormat(t)
+	case "json":
+		return NewJSONLogFormat(t, size)
 	default:
 		return ""
 	}
